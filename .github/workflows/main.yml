@@ -31,13 +31,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+  
+      - name: Install .NET WASM Build Tools
+        run: dotnet workload install wasm-tools
+  
+      - name: Restore dependencies
+        run: dotnet restore
+  
+      - name: Build
+        run: dotnet build --no-restore
+  
+      - name: Publish .NET Core Project
+        run: dotnet publish BlazorApp01.csproj -c:Release -o docs --nologo
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: 'docs'
+          path: 'docs/wwwroot'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
